@@ -16,18 +16,25 @@ router.get("/", (_req: Request, res: Response, _next: NextFunction) => {
 });
 
 // Temporary Error Testing route
-router.get("/error", (_req: Request, _res: Response) => {
-  throw new AppError("Product not found", 404, "NOT_FOUND");
-});
+// router.get("/error", (_req: Request, _res: Response) => {
+//   throw new AppError("Product not found", 404, "NOT_FOUND");
+// });
 
-router.get("/async-error", async (_req: Request, res: Response) => {
-  await Promise.resolve();
+// router.get("/async-error", async (_req: Request, res: Response) => {
+//   await Promise.resolve();
 
-  throw new AppError(
-    "Something went wrong in async operation",
-    400,
-    "ASYNC_OPERATION_FAILED",
-  );
-});
+//   throw new AppError(
+//     "Something went wrong in async operation",
+//     400,
+//     "ASYNC_OPERATION_FAILED",
+//   );
+// });
+
+// router.post("/test-body", (req: Request, res: Response) => {
+//   return res.status(200).json({
+//     success: true,
+//     receivedData: req.body,
+//   });
+// });
 
 export default router;
