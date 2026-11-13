@@ -1,36 +1,33 @@
-import type { ErrorRequestHandler, NextFunction, Request, Response } from "express";
+import type {
+  ErrorRequestHandler,
+  NextFunction,
+  Request,
+  Response,
+} from "express";
 import { AppError } from "../shared/errors/app-error.js";
+import { sendError } from "../shared/utils/api-response.js";
 
+export const errorMiddleware: ErrorRequestHandler = (
+  err: Error,
+  _req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  // Response header  already sent by the server
+ // Delegate the error to the next error handler
 
-export const errorMiddleware: ErrorRequestHandler = (err: Error, _req: Request, res: Response, next: NextFunction) => {
+  if (res.headersSent) {
+    return next(err);
+  }
 
-    // Response header  already sent by the server
-    // Express default error handler will not be called
+  // Known application error
 
-    if(res.headersSent){
-        return next(err);
-    }
+  if (err instanceof AppError) {
+    return sendError(res, err.message, err.code, err.statusCode);
+  }
 
-    // Known application error
+  // Unknown /unexpected error
+  console.error("Unexpected error:", err);
 
-    if(err instanceof AppError){
-        return res.status(err.statusCode).json({
-            success: false,
-            message: err.message,
-            error:{
-                code: err.code,
-            }
-        })
-    }
-
-    // Unknown /unexpected error
-    console.error("Unexpected error:", err);
-
-    return res.status(500).json({
-        success: false,
-        message: "Internal Server Error",
-        error:{
-            code: "INTERNAL_SERVER_ERROR",
-        }
-    })
-}
+  return sendError(res, "Internal Server Error", "INTERNAL_SERVER_ERROR", 500);
+};
