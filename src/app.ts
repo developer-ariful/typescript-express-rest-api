@@ -7,6 +7,8 @@ import helmet from "helmet";
 import cors from "cors";
 import morgan from "morgan";
 
+import productsRouter from "./modules/products/product.routes.js";
+
 const app: Express = express();
 
 // Disable Express information header
@@ -30,7 +32,8 @@ app.use(express.json({ limit: "10kb" }));
 app.use(express.urlencoded({ extended: true }));
 
 // API Routes
-app.use(`${env.API_PREFIX}/health`, healthRouter);
+app.use(`${env.API_PREFIX}/health`, healthRouter); // Health Check Route
+app.use(`${env.API_PREFIX}/products`, productsRouter); // Product Route
 
 // Not Found Middleware
 app.use(notFoundMiddleware);
