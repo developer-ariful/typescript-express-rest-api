@@ -79,6 +79,10 @@ describe("Product Repository", () => {
     expect(result).toBe(true);
     expect(repository.findById(product.id)).toBeNull();
   });
+
+  it("should return false when deleting an unknown product", ()=>{
+    expect(repository.delete("unknown-id")).toBe(false)
+  })
 });
 
 
