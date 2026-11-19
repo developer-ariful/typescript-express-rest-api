@@ -16,7 +16,7 @@ describe("POST /api/v1/products", () => {
     expect(response.status).toBe(201);
 
     expect(response.body.success).toBe(true);
-    expect(response.body.message).toBe("product created successfully");
+    expect(response.body.message).toBe("Product Created Successfully");
 
     expect(response.body.data).toMatchObject({
       name: "Mechanical Keyboard",

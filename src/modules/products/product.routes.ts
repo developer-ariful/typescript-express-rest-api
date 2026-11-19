@@ -6,7 +6,12 @@ import {
   productQuerySchema,
   updateProductSchema,
 } from "./product.schema.js";
-import { createProduct } from "./product.controller.js";
+import {
+  createProduct,
+  getAllProduct,
+  getProductById,
+  updateProduct,
+} from "./product.controller.js";
 
 const router = Router();
 
@@ -14,51 +19,16 @@ const router = Router();
 router.post("/", validateRequest(createProductSchema), createProduct);
 
 // GET /api/v1/products  [get all products]
-router.get(
-  "/",
-  validateRequest(productQuerySchema, "query"),
-  (req: Request, res: Response) => {
-    const query = res.locals.validated.query;
-
-    return res.json({
-      success: true,
-      message: "Product query is valid",
-      data: query,
-    });
-  },
-);
+router.get("/", validateRequest(productQuerySchema, "query"), getAllProduct);
 // GET /api/v1/products/:id
-router.get(
-  "/:id",
-  validateRequest(productIdSchema, "params"),
-  (req: Request, res: Response) => {
-    return res.json({
-      success: true,
-      message: "Product ID is valid",
-      data: res.locals.validated.params,
-    });
-  },
-);
+router.get("/:id", validateRequest(productIdSchema, "params"), getProductById);
 
 // PATCH /api/v1/products/:id
 router.patch(
   "/:id",
   validateRequest(productIdSchema, "params"),
-  validateRequest(updateProductSchema),
-  (req: Request, res: Response) => {
-    const { id } = res.locals.validated.params;
-    const updateData = res.locals.validated.body;
-
-    return res.json({
-      success: true,
-      message: "Product update request is valid",
-      data: {
-        id,
-        updateData,
-      },
-    });
-  },
+  validateRequest(updateProductSchema, 'body'),
+  updateProduct
 );
-
 
 export default router;
