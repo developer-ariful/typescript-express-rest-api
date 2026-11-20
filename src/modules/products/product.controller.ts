@@ -14,7 +14,7 @@ export const createProduct: RequestHandler = (_req: Request, res: Response) => {
   return sendSuccess(res, "Product Created Successfully", product, 201);
 };
 
-export const getAllProduct: RequestHandler = (req: Request, res: Response) => {
+export const getAllProducts: RequestHandler = (req: Request, res: Response) => {
   const query = res.locals.validated.query as ProductQuery;
   // Get All Product From Service
   const { products, total } = productService.findAllPaginated(query);

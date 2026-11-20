@@ -24,7 +24,7 @@ export const createProductSchema = z.object({
 export const updateProductSchema = createProductSchema
   .partial()
   .refine((data) => Object.keys(data).length > 0, {
-    message:"At least one field is required to update a product",
+    message: "At least one field is required to update a product",
   });
 
 // Product ID Schema
@@ -33,10 +33,30 @@ export const productIdSchema = z.object({
 });
 
 // Query Parameters Validation
-export const productQuerySchema = z.object({
-  page: z.coerce.number().int().positive().default(1),
-  limit: z.coerce.number().int().positive().max(100).default(10),
-});
+export const productQuerySchema = z
+  .object({
+    page: z.coerce.number().int().positive().default(1),
+    limit: z.coerce.number().int().positive().max(100).default(10),
+
+    search: z.string().trim().min(1).optional(),
+    category: z.string().trim().min(1).optional(),
+
+    minPrice: z.coerce.number().finite().nonnegative().optional(),
+    maxPrice: z.coerce.number().finite().nonnegative().optional(),
+
+    sortBy: z.enum(["price", "name", "createAt"]).default("createAt"),
+    sortOrder: z.enum(["asc", "desc"]).default("desc"),
+  })
+  .refine(
+    (data) =>
+      data.minPrice === undefined ||
+      data.maxPrice === undefined ||
+      data.minPrice <= data.maxPrice,
+    {
+      message: "minPrice cannot be greater than maxPrice",
+      path: ["minPrice"],
+    },
+  );
 
 // TypeScript Types
 export type CreateProductInput = z.infer<typeof createProductSchema>;

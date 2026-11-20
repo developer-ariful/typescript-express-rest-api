@@ -9,7 +9,7 @@ import {
 import {
   createProduct,
   deleteProduct,
-  getAllProduct,
+  getAllProducts,
   getProductById,
   updateProduct,
 } from "./product.controller.js";
@@ -20,7 +20,7 @@ const router = Router();
 router.post("/", validateRequest(createProductSchema), createProduct);
 
 // GET /api/v1/products  [get all products]
-router.get("/", validateRequest(productQuerySchema, "query"), getAllProduct);
+router.get("/", validateRequest(productQuerySchema, "query"), getAllProducts);
 // GET /api/v1/products/:id
 router.get("/:id", validateRequest(productIdSchema, "params"), getProductById);
 
