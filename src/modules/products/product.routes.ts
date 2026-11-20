@@ -8,6 +8,7 @@ import {
 } from "./product.schema.js";
 import {
   createProduct,
+  deleteProduct,
   getAllProduct,
   getProductById,
   updateProduct,
@@ -27,8 +28,15 @@ router.get("/:id", validateRequest(productIdSchema, "params"), getProductById);
 router.patch(
   "/:id",
   validateRequest(productIdSchema, "params"),
-  validateRequest(updateProductSchema, 'body'),
-  updateProduct
+  validateRequest(updateProductSchema, "body"),
+  updateProduct,
+);
+
+// DELETE /api/v1/products/:id
+router.delete(
+  "/:id",
+  validateRequest(productIdSchema, "params"),
+  deleteProduct,
 );
 
 export default router;

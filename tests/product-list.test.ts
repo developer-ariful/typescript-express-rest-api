@@ -4,7 +4,7 @@ import request from "supertest";
 
 describe("GET /api/v1/products", () => {
   it("should return all products", async () => {
-    // Create First prodcut
+    // Create First product
     await request(app).post("/api/v1/products").send({
       name: "Mechanical Keyboard",
       description: "RGB Mechanical Keyboard for developers",
@@ -22,7 +22,7 @@ describe("GET /api/v1/products", () => {
       category: "Electronics",
     });
 
-    // Get all prodcuts
+    // Get all Products
     const response = await request(app).get("/api/v1/products");
     expect(response.status).toBe(200);
     expect(response.body.success).toBe(true);

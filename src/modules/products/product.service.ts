@@ -4,7 +4,7 @@ import {
   productRepository,
   createProductRepository,
 } from "./product.repository.js";
-import type { ProductCreateData, ProductUpdateData } from "./product.types.js";
+import type { ProductCreateData, ProductQuery, ProductUpdateData } from "./product.types.js";
 
 // Repository type - allows us to inject a separate repository in tests
 type ProductRepository = ReturnType<typeof createProductRepository>;
@@ -55,6 +55,12 @@ export function createProductService(
 
       return true;
     },
+
+
+    //  Paginate product list
+    findAllPaginated(query: ProductQuery){
+      return repository.findAllPaginated(query);
+    }
   };
 }
 

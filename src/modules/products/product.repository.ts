@@ -4,7 +4,7 @@
 // - update() — Product পরিবর্তন করা
 // - delete() — Product মুছে ফেলা
 
-import type { Product, ProductUpdateData } from "./product.types.js";
+import type { Product, ProductQuery, ProductUpdateData } from "./product.types.js";
 
 // Repository Factory
 export function createProductRepository() {
@@ -55,6 +55,21 @@ export function createProductRepository() {
     delete(id: string): boolean {
       return products.delete(id);
     },
+
+    // Paginate
+    findAllPaginated(query:ProductQuery){
+      const {page, limit} = query;
+
+      const skip = (page-1)*limit;
+
+      const allProducts = Array.from(products.values());
+      const paginatedProducts = allProducts.slice(skip, skip+limit);
+
+      return {
+        products: paginatedProducts,
+        total: allProducts.length
+      }
+    }
   };
 }
 
