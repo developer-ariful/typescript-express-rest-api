@@ -1,0 +1,420 @@
+openapi: 3.0.3
+
+info: 
+  title: TypeScript Express REST API
+  description: Product Management REST API Documentation
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:5000/api/v1
+    description: Local Development Server
+
+tags:
+  - name: Health
+    description: API health check
+  - name: Products
+    description: Product management endpoint
+
+paths:
+  /health:
+    get:
+      tags:
+        - Health
+      summary: Check API health
+      responses: 
+        "200":
+          description: API is healthy
+          content:
+            application/json:
+              schema: 
+                $ref: "#/components/schemas/HealthResponse"
+  
+  /products:
+    post:
+      tags: 
+        - Products
+      summary: Create a product
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateProduct"
+      responses: 
+        "201":
+          description: Product created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProductCreatedResponse"
+        "400":
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidationErrorResponse"
+
+    get:
+      tags:
+        - Products
+      summary: Get all products
+      parameters:
+        - in: query
+          name: page
+          schema: 
+            type: integer
+            default: 1
+
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            default: 10
+            maximum: 100
+
+        - in: query
+          name: search
+          schema: 
+            type: string
+
+
+        - in: query
+          name: minPrice
+          schema:
+            type: number
+            minimum: 0
+        
+        - in: query
+          name: maxPrice
+          schema: 
+            type: number
+            minimum: 0
+
+        - in: query
+          name: sortBy
+          schema:
+            type: string
+            enum: 
+              - price
+              - name
+              - createdAt
+            default: createdAt
+        
+        - in: query
+          name: sortOrder
+          schema: 
+            type: string
+            enum:
+              - asc
+              - desc
+            default: desc
+      responses: 
+        "200":
+          description: Products retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProductListResponse"
+        "400":
+          description: Invalid query parameters
+          content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ValidationErrorResponse"
+
+  /products/{id}:
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema: 
+          type: string
+          format: uuid
+    get:
+      tags:
+        - Products
+      summary: Get product by ID
+      responses:
+        "200":
+          description: Product retrieved successfully
+        "404":
+          description: Product not found
+          content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ErrorResponse"
+    patch:
+      tags:
+        - Products
+      summary: Update products
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateProduct"
+      responses:
+        "200":
+          description: Product updated successfully
+        "404":
+          description: Product not found
+          content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ErrorResponse"
+    delete:
+      tags:
+        - Products
+      summary: Delete product
+      responses: 
+        "200":
+          description: Product delete successfully
+        "404":
+          description: Product not found
+          content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ErrorResponse"
+
+
+components:
+  schemas:
+    HealthResponse:
+      type: object
+      required:
+        - success
+        - message
+        - data
+      properties:
+        success:
+          type: boolean
+          example: true
+        message: 
+          type: string
+          example: API is running
+        data:
+          type: object
+          required:
+           - status
+          properties:
+            status: 
+              type: string
+              enum: 
+                - healthy
+              example: healthy
+    SuccessResponse:
+      type: object
+      required:
+        - success
+        - message
+        - data
+      properties:
+        success:
+          type: boolean
+          example: true
+        message: 
+          type: string
+          example: Request successful
+        data:
+          description: Response payload
+
+    ErrorResponse:
+      type: object
+      required:
+       - success
+       - message
+       - error
+      properties:
+        success:
+          type: boolean
+          example: false
+        message:  
+          type: string
+          example: Resource not found
+        error:
+          type: object
+          required:
+            - code
+          properties:
+            code:
+              type: string
+              example: NOT_FOUND
+    
+    ValidationErrorResponse:
+      type: object
+      required:
+        - success
+        - message
+        - error
+      properties: 
+        success:
+          type: boolean
+          example: false
+        message:
+          type: string
+          example: Validation failed
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              example: VALIDATION_ERROR
+            details:
+              type: array
+              items:
+                type: object
+                properties:
+                  field:
+                    type: string
+                    example: name
+                  message:
+                    type: string
+                    example: Product name must be at least 3 characters
+    ProductResponse:
+      type: object
+      required: 
+        - success
+        - message
+        - data
+      properties:
+        success:
+          type: boolean
+          example: true
+        message: 
+          type: string
+          example: Product retrieved successfully
+        data:
+          $ref: "#/components/schemas/Product"
+    
+    ProductListResponse:
+      type: object
+      required: 
+        - success
+        - message
+        - data
+        - meta
+      properties:
+        success:
+          type: boolean
+          example: true
+        message: 
+          type: string
+          example: Products retrieved successfully
+        data:
+          type: array
+          items: 
+            $ref: "#/components/schemas/Product"
+        meta:
+          type: object
+          required:
+            - page
+            - limit
+            - total
+            - totalPages
+          properties:
+            page:
+              type: integer
+              example: 1
+            limit: 
+              type: integer
+              example: 10
+            total: 
+              type: integer
+              example: 25
+            totalPages:
+              type: integer
+              example: 3
+
+    ProductCreatedResponse:
+      type: object
+      required:
+        - success
+        - message
+        - data
+      properties:
+        success:
+          type: boolean
+          example: true
+        message:
+          type: string
+          example: Product Created Successfully
+        data:
+          $ref: "#/components/schemas/Product"
+
+
+    CreateProduct:
+      type: object
+      required:
+        - name
+        - description
+        - price
+        - stock
+        - category
+      properties:
+        name: 
+          type: string
+          minLength: 3
+          maxLength: 100
+          example: Samsung Galaxy Phone
+        description:
+          type: string
+          minLength: 10
+          maxLength: 1000
+          example: Latest Samsung smartphone
+        price:
+          type: number
+          minimum: 0
+          exclusiveMinimum: true
+          example: 1500
+        stock:
+          type: integer
+          minimum: 0
+          example: 10
+        category:
+          type: string
+          minLength: 2
+          example: Electronics
+    UpdateProduct:
+      type: object
+      minProperties: 1
+      properties:
+        name: 
+          type: string
+          minLength: 3
+          maxLength: 100
+        description: 
+          type: string
+          minLength: 10
+          maxLength: 1000
+        price: 
+          type: number
+          minimum: 0
+          exclusiveMinimum: true
+          example: 1500
+        stock: 
+          type: integer
+          minimum: 0
+        category: 
+          type: string
+          minLength: 2
+          example: Electronics
+    Product:
+      allOf:
+      - $ref: "#/components/schemas/CreateProduct"
+      - type: object
+        required:
+          - id
+          - createdAt
+          - updatedAt
+        properties:
+          id:
+            type: string
+            format: uuid
+          createdAt:
+            type: string
+            format: date-time
+          updatedAt:
+            type: string
+            format: date-time
+          
+        

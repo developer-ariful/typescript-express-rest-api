@@ -44,8 +44,8 @@ export const productQuerySchema = z
     minPrice: z.coerce.number().finite().nonnegative().optional(),
     maxPrice: z.coerce.number().finite().nonnegative().optional(),
 
-    sortBy: z.enum(["price", "name", "createAt"]).default("createAt"),
-    sortOrder: z.enum(["asc", "desc"]).default("desc"),
+    sortBy: z.enum(["price", "name", "createdAt"]).default("createdAt"),
+    sortOrder: z.enum(["asc", "desc"]).default("asc"),
   })
   .refine(
     (data) =>

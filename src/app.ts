@@ -9,6 +9,9 @@ import morgan from "morgan";
 
 import productsRouter from "./modules/products/product.routes.js";
 
+import swaggerUI from "swagger-ui-express";
+import {swaggerDocument} from "./config/swagger.js";
+
 const app: Express = express();
 
 // Disable Express information header
@@ -30,6 +33,11 @@ app.use(morgan(env.NODE_ENV === "development" ? "dev" : "combined"));
 // Body Parsing Middleware
 app.use(express.json({ limit: "10kb" }));
 app.use(express.urlencoded({ extended: true }));
+
+// Swapper Documentation
+app.use(`${env.API_PREFIX}/api-docs`, swaggerUI.serve, swaggerUI.setup(swaggerDocument))
+
+
 
 // API Routes
 app.use(`${env.API_PREFIX}/health`, healthRouter); // Health Check Route
