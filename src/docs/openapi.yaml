@@ -1,13 +1,18 @@
 openapi: 3.0.3
 
-info: 
+info:
   title: TypeScript Express REST API
   description: Product Management REST API Documentation
   version: 1.0.0
+  license:
+    name: MIT
+    url: https://opensource.org/license/mit
 
 servers:
   - url: http://localhost:5000/api/v1
     description: Local Development Server
+
+security: []
 
 tags:
   - name: Health
@@ -18,20 +23,24 @@ tags:
 paths:
   /health:
     get:
+      operationId: checkHealth
       tags:
         - Health
       summary: Check API health
-      responses: 
+      responses:
         "200":
           description: API is healthy
           content:
             application/json:
-              schema: 
+              schema:
                 $ref: "#/components/schemas/HealthResponse"
-  
+        "404":
+          description: API is Unhealthy
+
   /products:
     post:
-      tags: 
+      operationId: createProduct
+      tags:
         - Products
       summary: Create a product
       requestBody:
@@ -40,7 +49,7 @@ paths:
           application/json:
             schema:
               $ref: "#/components/schemas/CreateProduct"
-      responses: 
+      responses:
         "201":
           description: Product created successfully
           content:
@@ -55,13 +64,14 @@ paths:
                 $ref: "#/components/schemas/ValidationErrorResponse"
 
     get:
+      operationId: getProducts
       tags:
         - Products
       summary: Get all products
       parameters:
         - in: query
           name: page
-          schema: 
+          schema:
             type: integer
             default: 1
 
@@ -74,19 +84,18 @@ paths:
 
         - in: query
           name: search
-          schema: 
+          schema:
             type: string
-
 
         - in: query
           name: minPrice
           schema:
             type: number
             minimum: 0
-        
+
         - in: query
           name: maxPrice
-          schema: 
+          schema:
             type: number
             minimum: 0
 
@@ -94,21 +103,21 @@ paths:
           name: sortBy
           schema:
             type: string
-            enum: 
+            enum:
               - price
               - name
               - createdAt
             default: createdAt
-        
+
         - in: query
           name: sortOrder
-          schema: 
+          schema:
             type: string
             enum:
               - asc
               - desc
             default: desc
-      responses: 
+      responses:
         "200":
           description: Products retrieved successfully
           content:
@@ -118,32 +127,46 @@ paths:
         "400":
           description: Invalid query parameters
           content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/ValidationErrorResponse"
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidationErrorResponse"
 
   /products/{id}:
     parameters:
-      - in: path
-        name: id
+      - name: id
+        in: path
         required: true
-        schema: 
+        description: Product UUID
+        schema:
           type: string
           format: uuid
+        example: "591f9a9e-528d-482c-bbd8-740a54b16079"
     get:
+      operationId: getProductById
       tags:
         - Products
       summary: Get product by ID
       responses:
         "200":
           description: Product retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProductResponse"
+        "400":
+          description: Invalid product ID
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidationErrorResponse"
         "404":
           description: Product not found
           content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/ErrorResponse"
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
     patch:
+      operationId: updateProduct
       tags:
         - Products
       summary: Update products
@@ -156,26 +179,46 @@ paths:
       responses:
         "200":
           description: Product updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProductResponse"
+        "400":
+          description: Invalid product ID or product data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidationErrorResponse"
         "404":
           description: Product not found
           content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/ErrorResponse"
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
     delete:
+      operationId: deleteProduct
       tags:
         - Products
       summary: Delete product
-      responses: 
+      responses:
         "200":
           description: Product delete successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DeleteResponse"
+        "400":
+          description: Invalid product ID
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidationErrorResponse"
         "404":
           description: Product not found
           content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/ErrorResponse"
-
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
 
 components:
   schemas:
@@ -189,20 +232,21 @@ components:
         success:
           type: boolean
           example: true
-        message: 
+        message:
           type: string
           example: API is running
         data:
           type: object
           required:
-           - status
+            - status
           properties:
-            status: 
+            status:
               type: string
-              enum: 
+              enum:
                 - healthy
               example: healthy
-    SuccessResponse:
+
+    DeleteResponse:
       type: object
       required:
         - success
@@ -212,23 +256,25 @@ components:
         success:
           type: boolean
           example: true
-        message: 
+        message:
           type: string
-          example: Request successful
+          example: Product deleted successfully
         data:
-          description: Response payload
+          type: object
+          nullable: true
+          example: null
 
     ErrorResponse:
       type: object
       required:
-       - success
-       - message
-       - error
+        - success
+        - message
+        - error
       properties:
         success:
           type: boolean
           example: false
-        message:  
+        message:
           type: string
           example: Resource not found
         error:
@@ -238,15 +284,15 @@ components:
           properties:
             code:
               type: string
-              example: NOT_FOUND
-    
+              example: PRODUCT_NOT_FOUND
+
     ValidationErrorResponse:
       type: object
       required:
         - success
         - message
         - error
-      properties: 
+      properties:
         success:
           type: boolean
           example: false
@@ -272,7 +318,7 @@ components:
                     example: Product name must be at least 3 characters
     ProductResponse:
       type: object
-      required: 
+      required:
         - success
         - message
         - data
@@ -280,15 +326,15 @@ components:
         success:
           type: boolean
           example: true
-        message: 
+        message:
           type: string
           example: Product retrieved successfully
         data:
           $ref: "#/components/schemas/Product"
-    
+
     ProductListResponse:
       type: object
-      required: 
+      required:
         - success
         - message
         - data
@@ -297,12 +343,12 @@ components:
         success:
           type: boolean
           example: true
-        message: 
+        message:
           type: string
           example: Products retrieved successfully
         data:
           type: array
-          items: 
+          items:
             $ref: "#/components/schemas/Product"
         meta:
           type: object
@@ -315,10 +361,10 @@ components:
             page:
               type: integer
               example: 1
-            limit: 
+            limit:
               type: integer
               example: 10
-            total: 
+            total:
               type: integer
               example: 25
             totalPages:
@@ -341,7 +387,6 @@ components:
         data:
           $ref: "#/components/schemas/Product"
 
-
     CreateProduct:
       type: object
       required:
@@ -351,7 +396,7 @@ components:
         - stock
         - category
       properties:
-        name: 
+        name:
           type: string
           minLength: 3
           maxLength: 100
@@ -376,45 +421,36 @@ components:
           example: Electronics
     UpdateProduct:
       type: object
-      minProperties: 1
       properties:
-        name: 
+        name:
           type: string
           minLength: 3
           maxLength: 100
-        description: 
-          type: string
-          minLength: 10
-          maxLength: 1000
-        price: 
+          example: Samsung Galaxy S25 Ultra
+        price:
           type: number
           minimum: 0
           exclusiveMinimum: true
-          example: 1500
-        stock: 
+          example: 1800
+        stock:
           type: integer
           minimum: 0
-        category: 
-          type: string
-          minLength: 2
-          example: Electronics
+          example: 20
     Product:
       allOf:
-      - $ref: "#/components/schemas/CreateProduct"
-      - type: object
-        required:
-          - id
-          - createdAt
-          - updatedAt
-        properties:
-          id:
-            type: string
-            format: uuid
-          createdAt:
-            type: string
-            format: date-time
-          updatedAt:
-            type: string
-            format: date-time
-          
-        
+        - $ref: "#/components/schemas/CreateProduct"
+        - type: object
+          required:
+            - id
+            - createdAt
+            - updatedAt
+          properties:
+            id:
+              type: string
+              format: uuid
+            createdAt:
+              type: string
+              format: date-time
+            updatedAt:
+              type: string
+              format: date-time
