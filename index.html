@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="bn">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>TypeScript Express REST API</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container header-inner">
+        <a class="brand" href="/">TypeScript Express REST API</a
+        ><a href="/api/v1/api-docs/">API Docs</a>
+      </div>
+    </header>
+    <main class="container">
+      <section class="intro">
+        <p class="label">PROJECT GUIDE</p>
+        <h1>Project Docs</h1>
+        <p>
+          Build this project using TypeScript & Express. How to run this REST API? - Simple Guide
+        </p>
+      </section>
+      <section>
+        <h2>Let's Start</h2>
+        <ol>
+          <li>Open Your Project root- terminal</li>
+          <li><code>npm install</code> Run this for install all Dependency</li>
+          <li>
+            Copy this <code>.env.example</code> file and crete <code>.env</code> then Paste
+          </li>
+          <li> Run Your Development server  <code>npm run dev</code> </li>
+        </ol>
+        <pre>
+            <code>
+                npm run build
+                npm start
+            </code>
+        </pre>
+      </section>
+      <section>
+        <h2>API routes</h2>
+        <p>API prefix: <code>/api/v1</code></p>
+        <ul class="routes">
+          <li>
+            <span>GET</span><code>/api/v1/health</code
+            ><small>Health Check of server</small>
+          </li>
+          <li>
+            <span>GET</span><code>/api/v1/products</code
+            ><small>Product list</small>
+          </li>
+          <li>
+            <span>POST</span><code>/api/v1/products</code
+            ><small>Create Product</small>
+          </li>
+          <li>
+            <span>GET</span><code>/api/v1/products/:id</code
+            ><small>Get Product By ID</small>
+          </li>
+          <li>
+            <span>PATCH</span><code>/api/v1/products/:id</code
+            ><small>Product Update</small>
+          </li>
+          <li>
+            <span>DELETE</span><code>/api/v1/products/:id</code
+            ><small>Product Delete</small>
+          </li>
+        </ul>
+        <p>
+          <a class="docs-link" href="/api/v1/api-docs/"
+            >See the API documentation →</a
+          >
+        </p>
+      </section>
+     
+    </main>
+    <footer><div class="container">TypeScript Express REST API</div></footer>
+  </body>
+</html>
