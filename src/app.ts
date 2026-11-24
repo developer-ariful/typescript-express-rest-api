@@ -12,7 +12,13 @@ import productsRouter from "./modules/products/product.routes.js";
 import swaggerUI from "swagger-ui-express";
 import {swaggerDocument} from "./config/swagger.js";
 
+import { fileURLToPath } from "node:url";
+
+const projectRoot = fileURLToPath(new URL("../", import.meta.url));
+
 const app: Express = express();
+
+
 
 // Disable Express information header
 app.disable("x-powered-by");
@@ -34,6 +40,13 @@ app.use(morgan(env.NODE_ENV === "development" ? "dev" : "combined"));
 app.use(express.json({ limit: "10kb" }));
 app.use(express.urlencoded({ extended: true }));
 
+app.get("/", (_req, res) => {
+  res.sendFile(fileURLToPath(new URL("../index.html", import.meta.url)));
+});
+
+app.get("/styles.css", (_req, res) => {
+  res.sendFile(fileURLToPath(new URL("../styles.css", import.meta.url)));
+});
 // Swapper Documentation
 app.use(`${env.API_PREFIX}/api-docs`, swaggerUI.serve, swaggerUI.setup(swaggerDocument))
 
