@@ -9,6 +9,8 @@ info:
     url: https://opensource.org/license/mit
 
 servers:
+  - url: https://typescript-express-rest-api.vercel.app/api/v1
+    description: Production Server
   - url: http://localhost:5000/api/v1
     description: Local Development Server
 
