@@ -26,9 +26,15 @@ app.disable("x-powered-by");
 app.use(helmet());
 
 // CORS Configuration
+const allowedOrigins = new Set([
+  "http://localhost:5173",
+  "https://typescript-express-rest-api.vercel.app",
+]);
 app.use(
   cors({
-    origin: env.CLIENT_URL,
+    origin(origin, callback) {
+      callback(null, !origin || allowedOrigins.has(origin));
+    },
     credentials: true,
   }),
 );
