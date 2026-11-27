@@ -10,11 +10,10 @@ import morgan from "morgan";
 import productsRouter from "./modules/products/product.routes.js";
 
 import swaggerUI from "swagger-ui-express";
+import pathToSwaggerUi from 'swagger-ui-dist';
 import {swaggerDocument} from "./config/swagger.js";
 
 import { fileURLToPath } from "node:url";
-
-const projectRoot = fileURLToPath(new URL("../", import.meta.url));
 
 const app: Express = express();
 
@@ -39,6 +38,7 @@ app.use(morgan(env.NODE_ENV === "development" ? "dev" : "combined"));
 // Body Parsing Middleware
 app.use(express.json({ limit: "10kb" }));
 app.use(express.urlencoded({ extended: true }));
+app.use(express.static(pathToSwaggerUi.absolutePath()))
 
 app.get("/", (_req, res) => {
   res.sendFile(fileURLToPath(new URL("../public/index.html", import.meta.url)));
