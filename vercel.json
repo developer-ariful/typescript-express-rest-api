@@ -1,13 +1,9 @@
 {
-  "version": 2,
-  "builds": [
-    { "src": "api/index.ts", "use": "@vercel/node" },
-    { "src": "index.html", "use": "@vercel/static" },
-    { "src": "styles.css", "use": "@vercel/static" }
-  ],
-  "routes": [
-    { "src": "/api/v1/(.*)", "dest": "/api/index.ts" },
-    { "src": "/styles.css", "dest": "/styles.css" },
-    { "src": "/(.*)", "dest": "/index.html" }
-  ]
-}
+  "framework": "express",
+  "buildCommand": "npm run build",
+  "functions": {
+    "server.js": {
+      "includeFiles": "dist/docs/openapi.yaml"
+    }
+  }
+} 
