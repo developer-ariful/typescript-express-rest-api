@@ -41,11 +41,11 @@ app.use(express.json({ limit: "10kb" }));
 app.use(express.urlencoded({ extended: true }));
 
 app.get("/", (_req, res) => {
-  res.sendFile(fileURLToPath(new URL("../index.html", import.meta.url)));
+  res.sendFile(fileURLToPath(new URL("../public/index.html", import.meta.url)));
 });
 
 app.get("/styles.css", (_req, res) => {
-  res.sendFile(fileURLToPath(new URL("../styles.css", import.meta.url)));
+  res.sendFile(fileURLToPath(new URL("../public/styles.css", import.meta.url)));
 });
 // Swapper Documentation
 app.use(`${env.API_PREFIX}/api-docs`, swaggerUI.serve, swaggerUI.setup(swaggerDocument))
